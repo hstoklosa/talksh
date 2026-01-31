@@ -1,8 +1,10 @@
 import os 
+import subprocess
 from google import genai
 
 from dotenv import load_dotenv
 load_dotenv()
+
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -29,7 +31,16 @@ def main():
     while True:
         user_input = input("Enter natural language command: ")
         command = get_command(user_input)
-        print(command)
+
+        confirm = input(f"{command} [Enter]")
+        if confirm == "":
+            result = subprocess.run(
+                command.split(),
+                capture_output=True,  # stdout and stderr
+                text=True,            # return string
+                check=True,           # raise exception on failure
+            )            
+            print(result.stdout)
 
 if __name__ == "__main__":
     main()
